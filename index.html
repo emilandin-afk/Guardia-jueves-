@@ -735,7 +735,15 @@ function renderNocturna() {
 function updateRow(el) {
   const {id, field} = el.dataset;
   rows = rows.map(r=>r.id===id?{...r,[field]:el.value}:r);
-  persist(); renderCarga();
+  persist();
+  // Re-renderizar tablas para actualizar opciones disponibles
+  if (field === 'asignado') {
+    renderTurno('tabla-manana', rows.filter(r=>SECTORES.find(x=>x.id===r.id)?.turno.startsWith('8')), '#f59e0b', 'TURNO MAÑANA (8-14 / 8-17)', optsM);
+    renderTurno('tabla-tarde', rows.filter(r=>SECTORES.find(x=>x.id===r.id)?.turno.startsWith('14')), '#38bdf8', 'TURNO TARDE (14-20)', optsT);
+    renderExtraGroup('tabla-extra-m', '8-14');
+    renderExtraGroup('tabla-extra-t', '14-20');
+  }
+  renderCarga();
 }
 
 function toggleLock(id) {
@@ -746,7 +754,15 @@ function toggleLock(id) {
 function updateExtra(el) {
   const {id, field} = el.dataset;
   extraSalas = extraSalas.map(s=>s.id===id?{...s,[field]:el.value}:s);
-  persist(); renderCarga();
+  persist();
+  // Re-renderizar tablas para actualizar opciones disponibles
+  if (field === 'asignado') {
+    renderTurno('tabla-manana', rows.filter(r=>SECTORES.find(x=>x.id===r.id)?.turno.startsWith('8')), '#f59e0b', 'TURNO MAÑANA (8-14 / 8-17)', optsM);
+    renderTurno('tabla-tarde', rows.filter(r=>SECTORES.find(x=>x.id===r.id)?.turno.startsWith('14')), '#38bdf8', 'TURNO TARDE (14-20)', optsT);
+    renderExtraGroup('tabla-extra-m', '8-14');
+    renderExtraGroup('tabla-extra-t', '14-20');
+  }
+  renderCarga();
 }
 
 function toggleLockExtra(id) {
