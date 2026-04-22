@@ -358,11 +358,16 @@ const hdrs = {
 
 async function dbRead() {
   try {
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?select=Data&limit=1`, {headers:hdrs});
+    // Leer la fila más reciente con datos válidos
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?select=Data&order=created_at.desc&limit=10`, {headers:hdrs});
     if (!r.ok) return null;
     const json = await r.json();
-    if (!json.length || !json[0].Data || json[0].Data==='{}') return null;
-    return JSON.parse(json[0].Data);
+    for (const row of json) {
+      if (row.Data && row.Data !== '{}') {
+        try { return JSON.parse(row.Data); } catch(e) {}
+      }
+    }
+    return null;
   } catch(e) { console.error('dbRead error:',e); return null; }
 }
 
@@ -370,12 +375,7 @@ async function dbWrite(snapshot) {
   const payload = {...snapshot, savedAt: Date.now()};
   const jsonStr = JSON.stringify(payload);
   try {
-    const rUpd = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?limit=1`, {
-      method:'PATCH',
-      headers:{...hdrs,'Prefer':'return=minimal'},
-      body: JSON.stringify({Data: jsonStr})
-    });
-    if (rUpd.ok) { savedAt = payload.savedAt; return true; }
+    // Insertar nueva fila con los datos actuales
     const rIns = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}`, {
       method:'POST',
       headers:{...hdrs,'Prefer':'return=minimal'},
