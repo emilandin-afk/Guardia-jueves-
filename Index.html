@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guardia Anestesia — Jueves Maciel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0c0f;--surf:#111418;--surf2:#181c22;--surf3:#1e2330;
+  --border:#252b35;--border2:#2d3545;
+  --accent:#4f8ef7;--green:#2ecc71;--red:#e74c3c;--amber:#f39c12;--purple:#9b59b6;
+  --muted:#5a6478;--muted2:#7a8499;--text:#d8dde8;
+  --night:#0d0b1f;--nightB:#2d2570;
+}
+body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+/* HEADER */
+.hdr{background:var(–surf);border-bottom:1px solid var(–border);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;position:sticky;top:0;z-index:100}
+.eyebrow{font-family:‘DM Mono’,monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(–accent);margin-bottom:3px}
+.ttl{font-size:19px;font-weight:800;letter-spacing:-.5px}
+.sub{font-family:‘DM Mono’,monospace;font-size:11px;color:var(–muted2);margin-top:2px;text-transform:capitalize}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.tbtn{background:transparent;color:var(–muted2);border:1px solid var(–border);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;font-family:‘Syne’,sans-serif;cursor:pointer;transition:all .15s}
+.tbtn:hover{border-color:var(–border2);color:var(–text)}
+.tbtn.on{background:var(–accent);border-color:var(–accent);color:#fff}
+
+/* SAVE BAR */
+.savebar{background:#06080a;border-bottom:1px solid var(–border);padding:5px 20px;display:flex;align-items:center;gap:8px;font-family:‘DM Mono’,monospace;font-size:11px}
+
+/* FLASH */
+.flash{text-align:center;padding:7px;font-size:12px;font-family:‘DM Mono’,monospace;border-bottom:1px solid var(–border);display:none}
+.flash.show{display:block}
+
+/* CONTENT */
+.content{max-width:860px;margin:0 auto;padding:20px 16px}
+.tab-panel{display:none}.tab-panel.on{display:block}
+
+/* COORD */
+.coordrow{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.coordcard{background:linear-gradient(135deg,#0d1e3d,#0a1628);border:1px solid #1d4ed8;border-radius:11px;padding:10px 15px;flex:1;min-width:170px}
+.coordlbl{font-family:‘DM Mono’,monospace;font-size:9px;color:#93c5fd;letter-spacing:2px;text-transform:uppercase}
+.coordnm{font-size:14px;font-weight:700;margin-top:3px}
+
+/* ACTIONS */
+.actbar{display:flex;gap:8px;margin-bottom:13px;flex-wrap:wrap;align-items:center}
+.hint{background:var(–surf);border:1px solid var(–border);border-radius:8px;padding:7px 13px;font-size:11px;color:var(–muted2);margin-bottom:18px;font-family:‘DM Mono’,monospace}
+
+/* TABLE */
+.sectitle{font-family:‘DM Mono’,monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;margin-bottom:9px}
+.tblwrap{border-radius:11px;border:1px solid var(–border);overflow:hidden;margin-bottom:22px}
+.tblhd{display:grid;padding:9px 15px;background:var(–surf2);font-family:‘DM Mono’,monospace;font-size:10px;color:var(–muted);letter-spacing:2px;text-transform:uppercase;gap:10px;grid-template-columns:2fr 2fr 2.5fr 34px}
+.tblrow{display:grid;gap:10px;padding:10px 15px;align-items:center;border-top:1px solid var(–border);grid-template-columns:2fr 2fr 2.5fr 34px}
+.tblrow:hover{background:var(–surf3)}
+.secinfo{display:flex;align-items:center;gap:7px}
+.secnm{font-size:13px;font-weight:600}
+.sechrs{font-family:‘DM Mono’,monospace;font-size:10px;color:var(–muted)}
+.fsel,.finp{background:var(–surf2);color:var(–text);border:1px solid var(–border);border-radius:7px;padding:6px 8px;font-size:12px;font-family:‘Syne’,sans-serif;width:100%;outline:none}
+.fsel:focus,.finp:focus{border-color:var(–accent)}
+.finp{color:var(–muted2);font-family:‘DM Mono’,monospace;font-size:11px}
+.lkbtn{background:none;border:none;cursor:pointer;font-size:14px;padding:4px;opacity:.7}
+.lkbtn:hover{opacity:1}
+
+/* APP BUTTON */
+.abtn{background:transparent;border:1px solid;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;font-family:‘Syne’,sans-serif;cursor:pointer;white-space:nowrap}
+.abtn:disabled{opacity:.35;cursor:not-allowed}
+
+/* EXTRAS */
+.extrapanel{background:var(–surf);border:1px solid var(–border);border-radius:11px;padding:15px;margin-bottom:22px}
+.extra-cols{display:flex;gap:14px;flex-wrap:wrap}
+.extra-col{flex:1;min-width:140px}
+
+/* NOCTURNA */
+.nocwrap{border-radius:11px;border:1px solid var(–nightB);overflow:hidden;margin-bottom:14px}
+.nochd{display:grid;padding:9px 15px;background:var(–night);font-family:‘DM Mono’,monospace;font-size:10px;color:var(–purple);letter-spacing:2px;text-transform:uppercase;gap:10px;grid-template-columns:2fr 2fr 38px}
+.nocrow{display:grid;gap:10px;padding:10px 15px;align-items:center;border-top:1px solid var(–nightB);grid-template-columns:2fr 2fr 38px}
+
+/* CARGA */
+.cargawrap{display:flex;flex-wrap:wrap;gap:7px}
+.cargabdg{border-radius:8px;padding:5px 11px;font-size:11px;display:flex;gap:7px;align-items:center;font-family:‘DM Mono’,monospace}
+.cargacnt{border-radius:4px;padding:1px 6px;font-weight:700;font-size:11px}
+
+/* HISTORIAL */
+.histitem{background:var(–surf);border:1px solid var(–border);border-radius:8px;padding:8px 13px;margin-bottom:5px;display:flex;justify-content:space-between;align-items:center;font-size:12px;font-family:‘DM Mono’,monospace}
+
+/* LOGIN */
+.loginwrap{min-height:100vh;background:var(–bg);display:flex;align-items:center;justify-content:center;padding:20px}
+.logincard{background:var(–surf);border:1px solid var(–border);border-radius:16px;padding:34px;width:100%;max-width:370px}
+.logininp{width:100%;background:var(–surf2);color:var(–text);border:1px solid var(–border);border-radius:9px;padding:11px 15px;font-size:14px;font-family:‘Syne’,sans-serif;outline:none;margin-bottom:10px}
+.logininp:focus{border-color:var(–accent)}
+.logininp.err{border-color:var(–red)}
+.loginsub{width:100%;background:var(–accent);color:#fff;border:none;border-radius:9px;padding:12px;font-size:14px;font-weight:700;font-family:‘Syne’,sans-serif;cursor:pointer;margin-bottom:11px}
+.loginsub:hover{background:#6ba3ff}
+
+/* READONLY */
+.rohdr{background:linear-gradient(135deg,#1d4ed8,#1e40af);color:#fff;padding:17px 18px}
+.rotbl{width:100%;border-collapse:collapse;margin-bottom:4px}
+.roth{background:#f3f4f6;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:6px 9px;text-align:left;border-bottom:2px solid #d1d5db;color:#555;font-family:‘DM Mono’,monospace}
+.rotd{padding:7px 9px;border-bottom:1px solid #f3f4f6;font-size:12px}
+.rosechd{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:6px 9px;border-bottom:2px solid;font-family:‘DM Mono’,monospace}
+
+/* MODAL */
+.modov{position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:1000;display:none;flex-direction:column}
+.modov.show{display:flex}
+.modhd{background:#1d4ed8;padding:13px 17px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.modbd{flex:1;overflow-y:auto;padding:15px;display:flex;flex-direction:column;gap:13px}
+
+/* IMPORT */
+.impta{width:100%;min-height:190px;background:var(–surf2);color:var(–text);border:1px solid var(–border);border-radius:10px;padding:13px;font-size:12px;font-family:‘DM Mono’,monospace;outline:none;resize:vertical}
+.impta:focus{border-color:var(–accent)}
+
+/* LOADING */
+.loading{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+.spinner{width:30px;height:30px;border:3px solid var(–border);border-top-color:var(–accent);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* READONLY WRAPPER */
+#ro-wrap{background:#fff;min-height:100vh;font-family:Georgia,serif;font-size:12px;color:#111;display:none}
+#ro-wrap.show{display:block}
+#ro-content{padding:14px;max-width:700px;margin:0 auto}
+</style>
+
+</head>
+<body>
+
+<!-- LOADING -->
+
+<div class="loading" id="screen-loading">
+  <div class="spinner"></div>
+  <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted2)">Conectando con Supabase…</div>
+</div>
+
+<!-- LOGIN -->
+
+<div class="loginwrap" id="screen-login" style="display:none">
+  <div class="logincard">
+    <div class="eyebrow">Coordinador</div>
+    <div class="ttl" style="margin-bottom:4px">Guardia de Anestesia</div>
+    <div style="font-size:13px;color:var(--muted2);margin-bottom:22px">Ingresá tu contraseña para editar</div>
+    <input type="password" id="pass-input" class="logininp" placeholder="Contraseña…">
+    <div id="pass-error" style="color:var(--red);font-size:12px;margin-bottom:8px;font-family:'DM Mono',monospace;display:none">Contraseña incorrecta</div>
+    <button class="loginsub" onclick="doLogin()">Ingresar</button>
+    <button onclick="showReadonly()" style="width:100%;background:transparent;color:var(--muted2);border:1px solid var(--border);border-radius:8px;padding:9px;font-size:13px;cursor:pointer;font-family:'Syne',sans-serif">Ver en modo lectura</button>
+  </div>
+</div>
+
+<!-- READONLY -->
+
+<div id="screen-readonly" style="display:none">
+  <div id="ro-wrap" class="show">
+    <div class="rohdr">
+      <div style="font-size:21px;font-weight:700;letter-spacing:-.5px">Guardia de Anestesia — Jueves</div>
+      <div id="ro-fecha" style="font-size:11px;opacity:.85;margin-top:3px;text-transform:capitalize"></div>
+      <div id="ro-saved" style="font-size:10px;opacity:.7;margin-top:2px;font-family:'DM Mono',monospace;display:none"></div>
+      <div style="margin-top:9px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <span style="background:rgba(255,255,255,.15);border-radius:4px;padding:2px 9px;font-size:9px;letter-spacing:2px;text-transform:uppercase">Solo lectura · actualiza cada 15s</span>
+        <button onclick="showLogin()" style="background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:6px;padding:3px 11px;font-size:11px;cursor:pointer;font-family:'Syne',sans-serif">Coordinador →</button>
+      </div>
+    </div>
+    <div id="ro-empty" style="background:#fefce8;border:1px solid #fde68a;margin:14px;border-radius:8px;padding:11px 15px;font-size:13px;color:#92400e;text-align:center;display:none">
+      ⏳ La planilla aún no fue cargada por el coordinador.
+    </div>
+    <div id="ro-content"></div>
+  </div>
+</div>
+
+<!-- EDITOR -->
+
+<div id="screen-editor" style="display:none">
+  <div class="hdr">
+    <div>
+      <div class="eyebrow">Coordinador — Guardia de Anestesia</div>
+      <div class="ttl">Planilla del Jueves</div>
+      <div class="sub" id="ed-fecha"></div>
+    </div>
+    <div class="tabs">
+      <button class="tbtn on" onclick="setTab('planilla',this)">📋 Planilla</button>
+      <button class="tbtn" onclick="setTab('nocturna',this)">🌙 Nocturna</button>
+      <button class="tbtn" onclick="setTab('importar',this)">📥 Importar</button>
+      <button onclick="showReadonly()" style="background:transparent;color:var(--muted2);border:1px solid var(--border);border-radius:8px;padding:6px 11px;font-size:12px;cursor:pointer;font-family:'Syne',sans-serif">👁 Ver como grupo</button>
+    </div>
+  </div>
+
+  <div class="savebar">
+    <span id="save-icon" style="color:var(--muted2)">■</span>
+    <span id="save-label" style="color:var(--muted2)">Listo</span>
+  </div>
+
+  <div class="flash" id="flash-bar"></div>
+
+  <div class="content">
+    <!-- PLANILLA -->
+    <div class="tab-panel on" id="tab-planilla">
+      <div class="coordrow" id="coord-row"></div>
+      <div class="actbar">
+        <button class="abtn" style="color:#4f8ef7;border-color:#4f8ef7" onclick="regenerar()">🎲 Rotar asignaciones</button>
+        <button class="abtn" style="color:#5a6478;border-color:#5a6478" onclick="guardarHistorial()">📌 Historial</button>
+        <button class="abtn" id="btn-deshacer" style="color:#5a6478;border-color:#5a6478;display:none" onclick="deshacer()">↩ Deshacer</button>
+        <button class="abtn" style="color:#2ecc71;border-color:#2ecc71" onclick="document.getElementById('modal-wa').classList.add('show')">📋 Compartir texto</button>
+      </div>
+      <div class="hint">🔒 Bloqueado = no cambia al rotar &nbsp;·&nbsp; <strong style="color:var(--green)">Guardado en la nube — todos ven lo mismo</strong></div>
+      <div id="tabla-manana"></div>
+      <div id="tabla-extra-m"></div>
+      <div id="tabla-tarde"></div>
+      <div id="tabla-extra-t"></div>
+
+```
+  <!-- SALAS EXTRA -->
+  <div class="extrapanel">
+    <div class="sectitle" style="color:var(--muted2);margin-bottom:13px">Agregar sala extra</div>
+    <div class="extra-cols">
+      <div class="extra-col">
+        <div style="font-size:11px;color:#f59e0b;margin-bottom:7px;font-weight:700;font-family:'DM Mono',monospace;letter-spacing:1px">Mañana (8-14)</div>
+        <button onclick="addExtra('Traumatologia','🦴','8-14')" style="display:block;width:100%;background:#120c00;color:#f59e0b;border:1px solid #78350f;border-radius:8px;padding:6px 11px;font-size:12px;cursor:pointer;margin-bottom:5px;text-align:left;font-family:'Syne',sans-serif;font-weight:600">🦴 Traumatologia</button>
+        <button onclick="addExtra('Ecocardio transesofagico','🫀','8-14')" style="display:block;width:100%;background:#120c00;color:#f59e0b;border:1px solid #78350f;border-radius:8px;padding:6px 11px;font-size:12px;cursor:pointer;margin-bottom:5px;text-align:left;font-family:'Syne',sans-serif;font-weight:600">🫀 Ecocardio transesofagico</button>
+        <button onclick="addExtra('Resonancia','🧲','8-14')" style="display:block;width:100%;background:#120c00;color:#f59e0b;border:1px solid #78350f;border-radius:8px;padding:6px 11px;font-size:12px;cursor:pointer;margin-bottom:5px;text-align:left;font-family:'Syne',sans-serif;font-weight:600">🧲 Resonancia</button>
+      </div>
+      <div class="extra-col">
+        <div style="font-size:11px;color:#818cf8;margin-bottom:7px;font-weight:700;font-family:'DM Mono',monospace;letter-spacing:1px">Tarde (14-20)</div>
+        <button onclick="addExtra('Traumatologia','🦴','14-20')" style="display:block;width:100%;background:#0e0c2e;color:#818cf8;border:1px solid #4338ca;border-radius:8px;padding:6px 11px;font-size:12px;cursor:pointer;margin-bottom:5px;text-align:left;font-family:'Syne',sans-serif;font-weight:600">🦴 Traumatologia</button>
+        <button onclick="addExtra('Ecocardio transesofagico','🫀','14-20')" style="display:block;width:100%;background:#0e0c2e;color:#818cf8;border:1px solid #4338ca;border-radius:8px;padding:6px 11px;font-size:12px;cursor:pointer;margin-bottom:5px;text-align:left;font-family:'Syne',sans-serif;font-weight:600">🫀 Ecocardio transesofagico</button>
+        <button onclick="addExtra('Resonancia','🧲','14-20')" style="display:block;width:100%;background:#0e0c2e;color:#818cf8;border:1px solid #4338ca;border-radius:8px;padding:6px 11px;font-size:12px;cursor:pointer;margin-bottom:5px;text-align:left;font-family:'Syne',sans-serif;font-weight:600">🧲 Resonancia</button>
+      </div>
+      <div class="extra-col">
+        <div style="font-size:11px;color:var(--muted2);margin-bottom:7px;font-weight:700;font-family:'DM Mono',monospace;letter-spacing:1px">Personalizada</div>
+        <input id="custom-sala" placeholder="Nombre…" class="fsel" style="margin-bottom:7px">
+        <div style="display:flex;gap:5px">
+          <button onclick="addCustom('8-14')" style="flex:1;background:#120c00;color:#f59e0b;border:1px solid #78350f;border-radius:7px;padding:5px 7px;font-size:11px;cursor:pointer;font-family:'Syne',sans-serif;font-weight:700">+ Mañana</button>
+          <button onclick="addCustom('14-20')" style="flex:1;background:#0e0c2e;color:#818cf8;border:1px solid #4338ca;border-radius:7px;padding:5px 7px;font-size:11px;cursor:pointer;font-family:'Syne',sans-serif;font-weight:700">+ Tarde</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARGA -->
+  <div style="margin-bottom:26px">
+    <div class="sectitle" style="color:var(--muted2);margin-bottom:11px">Carga por persona</div>
+    <div class="cargawrap" id="carga-wrap"></div>
+  </div>
+
+  <!-- HISTORIAL -->
+  <div id="historial-wrap" style="display:none">
+    <div class="sectitle" style="color:var(--muted2);margin-bottom:9px">Historial local</div>
+    <div id="historial-list"></div>
+  </div>
+</div>
+
+<!-- NOCTURNA -->
+<div class="tab-panel" id="tab-nocturna">
+  <div style="margin-bottom:16px">
+    <div class="eyebrow" style="color:var(--purple)">Guardia Nocturna</div>
+    <div class="ttl" style="margin-top:4px">🌙 Turno 20-8 hs</div>
+  </div>
+  <div class="nocwrap">
+    <div class="nochd"><span>Sector</span><span>Anestesista</span><span></span></div>
+    <div id="noc-rows"></div>
+  </div>
+  <button class="abtn" style="color:var(--purple);border-color:var(--purple)" onclick="addNoc()">+ Agregar slot</button>
+</div>
+
+<!-- IMPORTAR -->
+<div class="tab-panel" id="tab-importar">
+  <div style="margin-bottom:16px">
+    <div class="eyebrow">Importar planilla semanal</div>
+    <div class="ttl" style="margin-top:4px">📥 Pegar desde Google Sheets</div>
+  </div>
+  <div style="background:var(--surf);border:1px solid var(--border);border-radius:11px;padding:15px;margin-bottom:15px;font-size:12px;line-height:2.2;color:var(--muted2);font-family:'DM Mono',monospace">
+    1. Abrí el Google Sheet de la semana<br>
+    2. Seleccioná todas las celdas (Ctrl+A / Cmd+A)<br>
+    3. Copiá (Ctrl+C) y pegá abajo
+  </div>
+  <textarea class="impta" id="paste-area" placeholder="Pegá acá el contenido..."></textarea>
+  <div style="display:flex;gap:9px;margin-top:11px">
+    <button class="abtn" style="color:var(--accent);border-color:var(--accent)" onclick="handleImport()">📥 Importar jueves</button>
+    <button class="abtn" style="color:#5a6478;border-color:#5a6478;font-size:11px;padding:4px 9px" onclick="document.getElementById('paste-area').value=''">✕ Limpiar</button>
+  </div>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- MODAL WHATSAPP -->
+
+<div class="modov" id="modal-wa">
+  <div class="modhd">
+    <span style="color:#fff;font-weight:700;font-size:15px;font-family:'Syne',sans-serif">💬 Compartir por WhatsApp</span>
+    <button onclick="document.getElementById('modal-wa').classList.remove('show')" style="background:rgba(255,255,255,.2);color:#fff;border:none;border-radius:8px;padding:6px 13px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif">✕</button>
+  </div>
+  <div class="modbd">
+    <button id="btn-copiar" onclick="copiarTexto()" style="width:100%;background:#15803d;color:#fff;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif">📋 Copiar planilla</button>
+    <pre id="texto-wa" style="background:#0d1117;color:#d8dde8;border-radius:10px;padding:15px;font-size:11px;line-height:1.8;overflow-x:auto;white-space:pre-wrap;word-break:break-word;font-family:'DM Mono',monospace;border:1px solid #252b35"></pre>
+  </div>
+</div>
+
+<script>
+// ─── CONFIG ───────────────────────────────────────────────────────────────────
+const PASSWORD = 'guardia2025';
+const SUPABASE_URL = 'https://fbrfpnitnrdeflgsfscm.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZicmZwbml0bnJkZWZsZ3Nmc2NtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4Nzk4ODAsImV4cCI6MjA5MjQ1NTg4MH0.XLl20qHOKF4z-NWRUy5M_hHai9Ub8L05jsCYC_SsxNM';
+const TABLE = encodeURIComponent('Guardia jueves maciel');
+const POLL_MS = 15000;
+
+const SECTORES = [
+  {id:'cir3_m', label:'Cirugia S3',   turno:'8-14',  emoji:'🔪', pool:'m'},
+  {id:'cir4_m', label:'Cirugia S4',   turno:'8-14',  emoji:'🔪', pool:'m'},
+  {id:'uro6_m', label:'Urologia S6',  turno:'8-14',  emoji:'🫀', pool:'m'},
+  {id:'uro8_m', label:'Urologia S8',  turno:'8-14',  emoji:'🫀', pool:'m'},
+  {id:'fbc_m',  label:'FBC',          turno:'8-14',  emoji:'🫁', pool:'m'},
+  {id:'endo_m', label:'Endoscopia',   turno:'8-17',  emoji:'🔭', pool:'e'},
+  {id:'angio_m',label:'Angiografo',   turno:'8-14',  emoji:'💉', pool:'m'},
+  {id:'urg_m',  label:'Urgencia',     turno:'8-14',  emoji:'🚨', pool:'m'},
+  {id:'cir3_t', label:'Cirugia S3',   turno:'14-20', emoji:'🔪', pool:'t'},
+  {id:'cir4_t', label:'Cirugia S4',   turno:'14-20', emoji:'🔪', pool:'t'},
+  {id:'uro_t',  label:'Urologia',     turno:'14-20', emoji:'🫀', pool:'t'},
+  {id:'angio_t',label:'Angiografo',   turno:'14-20', emoji:'💉', pool:'t'},
+  {id:'ercp_t', label:'ERCP',         turno:'14-20', emoji:'🔬', pool:'t'},
+  {id:'urg_t',  label:'Urgencia',     turno:'14-20', emoji:'🚨', pool:'t'},
+  {id:'recup_t',label:'Recuperacion', turno:'14-20', emoji:'🛏️', pool:'t'},
+];
+
+const JUEVES_BASE = {
+  coordinador1:{nombre:'DIEGO RAMOS', turno:'8-20'},
+  coordinador2:{nombre:'EMILIANO LANDIN', turno:'8-20'},
+  manana:['LISSI BOYARO','EDUARDO GARAT','SANTIAGO SALABERRY','SEBASTIAN GOMEZ','LUNA MENDIBOURE','ALLISON ARMAND','JULIANA LAPORTE'],
+  endoscopia:'NATALIA LARZABAL',
+  tarde:['JULIANA LAPORTE','ALLISON ARMAND','SEBASTIAN GOMEZ','SANTIAGO SALABERRY','KARL TOOT','GLADYS CARBALLO'],
+  nocturnos:[
+    {id:'noc1',nombre:'JOAQUIN VENTIMIGLIA',sector:'Guardia nocturna'},
+    {id:'noc2',nombre:'SANTIAGO RAVERA',sector:'Guardia nocturna'},
+    {id:'noc3',nombre:'LUCIANO CARBONE',sector:'Guardia nocturna'},
+  ]
+};
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let jData = JSON.parse(JSON.stringify(JUEVES_BASE));
+let rows = SECTORES.map(s=>({id:s.id,asignado:'',nota:'',bloqueado:false}));
+let nocturnos = JSON.parse(JSON.stringify(JUEVES_BASE.nocturnos));
+let extraSalas = [];
+let historial = [];
+let savedAt = null;
+let pollTimer = null;
+let currentMode = 'loading';
+let fecha = getNextThursday();
+
+// ─── SUPABASE ─────────────────────────────────────────────────────────────────
+const hdrs = {
+  'Content-Type':'application/json',
+  'apikey': SUPABASE_KEY,
+  'Authorization': `Bearer ${SUPABASE_KEY}`
+};
+
+async function dbRead() {
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?select=Data&limit=1`, {headers:hdrs});
+    if (!r.ok) return null;
+    const json = await r.json();
+    if (!json.length || !json[0].Data || json[0].Data==='{}') return null;
+    return JSON.parse(json[0].Data);
+  } catch(e) { console.error('dbRead error:',e); return null; }
+}
+
+async function dbWrite(snapshot) {
+  const payload = {...snapshot, savedAt: Date.now()};
+  const jsonStr = JSON.stringify(payload);
+  try {
+    const rUpd = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?limit=1`, {
+      method:'PATCH',
+      headers:{...hdrs,'Prefer':'return=minimal'},
+      body: JSON.stringify({Data: jsonStr})
+    });
+    if (rUpd.ok) { savedAt = payload.savedAt; return true; }
+    const rIns = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}`, {
+      method:'POST',
+      headers:{...hdrs,'Prefer':'return=minimal'},
+      body: JSON.stringify({Data: jsonStr})
+    });
+    if (rIns.ok) { savedAt = payload.savedAt; return true; }
+    console.error('dbWrite failed:', await rIns.text());
+    return false;
+  } catch(e) { console.error('dbWrite error:',e); return false; }
+}
+
+async function persist() {
+  setSaveStatus('saving');
+  const ok = await dbWrite({jData, rows, nocturnos, extraSalas, fecha});
+  setSaveStatus(ok ? 'saved' : 'error');
+  if (ok) setTimeout(()=>setSaveStatus('idle'), 2500);
+  else setTimeout(()=>setSaveStatus('idle'), 4000);
+}
+
+function setSaveStatus(s) {
+  const colors = {idle:'#5a6478',saving:'#f39c12',saved:'#2ecc71',error:'#e74c3c'};
+  const labels = {
+    idle: savedAt ? `Guardado ${fmtTime(savedAt)}` : 'Listo',
+    saving: 'Guardando en Supabase…',
+    saved: `✓ Guardado ${fmtTime(savedAt)}`,
+    error: '✗ Error al guardar'
+  };
+  document.getElementById('save-icon').style.color = colors[s];
+  document.getElementById('save-label').style.color = colors[s];
+  document.getElementById('save-label').textContent = labels[s];
+}
+
+function applyData(data) {
+  if (data.jData)            jData = data.jData;
+  if (data.rows?.length > 0) rows = data.rows;
+  if (data.nocturnos)        nocturnos = data.nocturnos;
+  if (data.extraSalas)       extraSalas = data.extraSalas;
+  if (data.savedAt)          savedAt = data.savedAt;
+}
+
+// ─── HELPERS ──────────────────────────────────────────────────────────────────
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i=a.length-1;i>0;i--) {
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function getNextThursday() {
+  const today = new Date();
+  const diff = (4 - today.getDay() + 7) % 7 || 7;
+  const d = new Date(today);
+  d.setDate(today.getDate() + diff);
+  return d.toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+
+function fmtTime(ts) {
+  if (!ts) return '';
+  return new Date(ts).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+}
+
+function showFlash(msg, type='ok') {
+  const el = document.getElementById('flash-bar');
+  el.textContent = msg;
+  el.style.background = type==='err' ? '#1a0808' : '#081a10';
+  el.style.color = type==='err' ? 'var(--red)' : 'var(--green)';
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'), 3000);
+}
+
+function todosEquipo() {
+  const set = new Set([
+    ...jData.manana, jData.endoscopia,
+    ...jData.tarde,
+    ...nocturnos.map(n=>n.nombre),
+    jData.coordinador1?.nombre, jData.coordinador2?.nombre
+  ].filter(Boolean));
+  return [...set].sort();
+}
+
+function buildAssignment(data, locked=[]) {
+  const lockedMap = Object.fromEntries(locked.map(r=>[r.id,r]));
+  const mPool = shuffle(data.manana.slice());
+  const tPool = shuffle(data.tarde.slice());
+  let mi=0,ti=0;
+  return SECTORES.map(s=>{
+    if (lockedMap[s.id]) return lockedMap[s.id];
+    if (s.pool==='e') return {id:s.id,asignado:data.endoscopia||'',nota:'',bloqueado:false};
+    if (s.pool==='m') return {id:s.id,asignado:mPool[mi++%mPool.length]||'',nota:'',bloqueado:false};
+    if (s.pool==='t') return {id:s.id,asignado:tPool[ti++%tPool.length]||'',nota:'',bloqueado:false};
+    return {id:s.id,asignado:'',nota:'',bloqueado:false};
+  });
+}
+
+function optsM(cur) {
+  const used = {};
+  rows.filter(r=>SECTORES.find(x=>x.id===r.id)?.turno.startsWith('8')).forEach(r=>{if(r.asignado)used[r.asignado]=1;});
+  extraSalas.filter(s=>s.turno==='8-14').forEach(s=>{if(s.asignado)used[s.asignado]=1;});
+  const pool = [...new Set([...jData.manana,...(jData.endoscopia?[jData.endoscopia]:[])])].sort();
+  return pool.filter(n=>n===cur||!used[n]);
+}
+
+function optsT(cur) {
+  const used = {};
+  rows.filter(r=>SECTORES.find(x=>x.id===r.id)?.turno.startsWith('14')).forEach(r=>{if(r.asignado)used[r.asignado]=1;});
+  extraSalas.filter(s=>s.turno==='14-20').forEach(s=>{if(s.asignado)used[s.asignado]=1;});
+  const pool = [...new Set(jData.tarde)].sort();
+  return pool.filter(n=>n===cur||!used[n]);
+}
+
+// ─── SCREENS ──────────────────────────────────────────────────────────────────
+function show(id) {
+  ['screen-loading','screen-login','screen-readonly','screen-editor'].forEach(s=>{
+    document.getElementById(s).style.display = s===id ? 'block' : 'none';
+  });
+  currentMode = id.replace('screen-','');
+}
+
+function showLogin() { show('screen-login'); stopPoll(); }
+function showEditor() { show('screen-editor'); stopPoll(); renderAll(); }
+
+function showReadonly() {
+  show('screen-readonly');
+  renderReadonly();
+  startPoll();
+}
+
+function doLogin() {
+  const val = document.getElementById('pass-input').value;
+  if (val === PASSWORD) {
+    document.getElementById('pass-error').style.display='none';
+    showEditor();
+  } else {
+    document.getElementById('pass-error').style.display='block';
+  }
+}
+document.getElementById('pass-input').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
+
+// ─── POLLING ──────────────────────────────────────────────────────────────────
+function startPoll() {
+  stopPoll();
+  pollTimer = setInterval(async()=>{
+    const data = await dbRead();
+    if (data) { applyData(data); renderReadonly(); }
+  }, POLL_MS);
+}
+function stopPoll() { if(pollTimer){clearInterval(pollTimer);pollTimer=null;} }
+
+// ─── TABS ─────────────────────────────────────────────────────────────────────
+function setTab(name, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tbtn').forEach(b=>b.classList.remove('on'));
+  document.getElementById('tab-'+name).classList.add('on');
+  btn.classList.add('on');
+  if (name==='planilla') renderAll();
+  if (name==='nocturna') renderNocturna();
+}
+
+// ─── RENDER READONLY ──────────────────────────────────────────────────────────
+function renderReadonly() {
+  document.getElementById('ro-fecha').textContent = fecha;
+  const saved = document.getElementById('ro-saved');
+  if (savedAt) { saved.style.display='block'; saved.textContent=`Última actualización: ${fmtTime(savedAt)}`; }
+
+  const isEmpty = rows.every(r=>!r.asignado);
+  document.getElementById('ro-empty').style.display = isEmpty ? 'block' : 'none';
+
+  const manana = rows.filter(r=>SECTORES.find(x=>x.id===r.id)?.turno.startsWith('8'));
+  const tarde  = rows.filter(r=>SECTORES.find(x=>x.id===r.id)?.turno.startsWith('14'));
+  const extraM = extraSalas.filter(s=>s.turno==='8-14');
+  const extraT = extraSalas.filter(s=>s.turno==='14-20');
+
+  const mkTh = t => `<th class="roth">${t}</th>`;
+  const mkTd = (v,fw,cl) => `<td class="rotd" style="font-weight:${fw||'normal'};color:${cl||'inherit'}">${v||''}</td>`;
+
+  const mkTabla = (list, extra=[]) => {
+    const rows_html = [...list,...extra].map((r,i)=>{
+      const s = SECTORES.find(x=>x.id===r.id);
+      return `<tr style="background:${i%2===0?'#fff':'#fafafa'}">
+        ${mkTd(s?.label||r.label)}
+        ${mkTd(s?.turno||r.turno,'normal','inherit')}
+        ${mkTd(r.asignado||'–',700,r.asignado?'#111':'#ccc')}
+        <td class="rotd" style="font-size:10px;color:#999;font-family:'DM Mono',monospace">${r.nota||''}</td>
+      </tr>`;
+    }).join('');
+    return `<table class="rotbl"><thead><tr>${mkTh('Sector')}${mkTh('Horario')}${mkTh('Anestesista')}${mkTh('Nota')}</tr></thead><tbody>${rows_html}</tbody></table>`;
+  };
+
+  const coords = [jData.coordinador1,jData.coordinador2].filter(Boolean).map((c,i)=>`
+    <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:7px 13px;flex:1;min-width:130px">
+      <div style="font-size:9px;color:#0369a1;font-weight:700;text-transform:uppercase;letter-spacing:1px;font-family:'DM Mono',monospace">Coord G3 (${i+1}) — ${c.turno}</div>
+      <div style="font-size:14px;font-weight:700;margin-top:3px">${c.nombre}</div>
+    </div>`).join('');
+
+  const nocHtml = nocturnos.map((n,i)=>`<tr style="background:${i%2===0?'#fafafe':'#f5f5ff'}">
+    <td class="rotd">${n.sector}</td>
+    <td class="rotd" style="font-family:'DM Mono',monospace;font-size:11px">20-8</td>
+    <td class="rotd" style="font-weight:700;color:${n.nombre?'#111':'#ccc'}">${n.nombre||'–'}</td>
+  </tr>`).join('');
+
+  document.getElementById('ro-content').innerHTML = `
+    <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap">${coords}</div>
+    <div style="margin-bottom:14px">
+      <div class="rosechd" style="background:#fff7ed;color:#b45309;border-color:#f59e0b">Turno Mañana (8-14 / 8-17)</div>
+      ${mkTabla(manana, extraM)}
+    </div>
+    <div style="margin-bottom:14px">
+      <div class="rosechd" style="background:#f0f9ff;color:#0369a1;border-color:#38bdf8">Turno Tarde (14-20)</div>
+      ${mkTabla(tarde, extraT)}
+    </div>
+    <div style="margin-bottom:14px">
+      <div class="rosechd" style="background:#eef2ff;color:#4338ca;border-color:#818cf8">Guardia Nocturna (20-8)</div>
+      <table class="rotbl"><thead><tr>${mkTh('Sector')}${mkTh('Horario')}${mkTh('Anestesista')}</tr></thead><tbody>${nocHtml}</tbody></table>
+    </div>
+    <div style="font-size:9px;color:#ccc;text-align:right;border-top:1px solid #e5e7eb;padding-top:7px;font-family:'DM Mono',monospace">Guardia de Anestesia · Solo lectura</div>
+  `;
+}
+
+// ─── RENDER EDITOR ────────────────────────────────────────────────────────────
+function renderAll() {
+  document.getElementById('ed-fecha').textContent = '📅 ' + fecha;
+  renderCoords();
+  renderTurno('tabla-manana', rows.filter(r=>SECTORES.find(x=>x.id===r.id)?.turno.startsWith('8')), '#f59e0b', 'TURNO MAÑANA (8-14 / 8-17)', optsM);
+  renderExtraGroup('tabla-extra-m', '8-14');
+  renderTurno('tabla-tarde', rows.filter(r=>SECTORES.find(x=>x.id===r.id)?.turno.startsWith('14')), '#38bdf8', 'TURNO TARDE (14-20)', optsT);
+  renderExtraGroup('tabla-extra-t', '14-20');
+  renderCarga();
+  renderHistorial();
+}
+
+function renderCoords() {
+  document.getElementById('coord-row').innerHTML = [jData.coordinador1,jData.coordinador2].filter(Boolean).map((c,i)=>`
+    <div class="coordcard">
+      <div class="coordlbl">Coord G3 (${i+1}) — ${c.turno}</div>
+      <div class="coordnm">${c.nombre}</div>
+    </div>`).join('');
+}
+
+function renderTurno(containerId, list, color, title, optsFn) {
+  const rows_html = list.map((row,i)=>{
+    const sec = SECTORES.find(s=>s.id===row.id);
+    const opts = optsFn(row.asignado).map(n=>`<option value="${n}"${n===row.asignado?' selected':''}>${n}</option>`).join('');
+    return `<div class="tblrow" style="background:${i%2===0?'var(--surf)':'var(--bg)'};opacity:${row.bloqueado?.6:1}">
+      <div class="secinfo">
+        <span style="font-size:15px">${sec?.emoji}</span>
+        <div><div class="secnm">${sec?.label}</div><div class="sechrs">${sec?.turno}</div></div>
+      </div>
+      <select class="fsel" data-id="${row.id}" data-field="asignado" onchange="updateRow(this)" ${row.bloqueado?'disabled':''}>
+        <option value="">– sin asignar –</option>${opts}
+      </select>
+      <input class="finp" placeholder="Nota…" value="${row.nota||''}" data-id="${row.id}" data-field="nota" oninput="updateRow(this)">
+      <button class="lkbtn" onclick="toggleLock('${row.id}')" style="color:${row.bloqueado?'var(--accent)':'var(--muted)'}">${row.bloqueado?'🔒':'🔓'}</button>
+    </div>`;
+  }).join('');
+  document.getElementById(containerId).innerHTML = `
+    <div style="margin-bottom:22px">
+      <div class="sectitle" style="color:${color}">${title}</div>
+      <div class="tblwrap">
+        <div class="tblhd"><span>Sector</span><span>Anestesista</span><span>Nota</span><span></span></div>
+        ${rows_html}
+      </div>
+    </div>`;
+}
+
+function renderExtraGroup(containerId, turno) {
+  const list = extraSalas.filter(s=>s.turno===turno);
+  if (!list.length) { document.getElementById(containerId).innerHTML=''; return; }
+  const color = turno==='8-14' ? '#f59e0b' : '#818cf8';
+  const bc    = turno==='8-14' ? '#78350f' : '#4338ca';
+  const bg    = turno==='8-14' ? '#120c00' : '#0e0c2e';
+  const bgAlt = turno==='8-14' ? '#0a0700' : '#08071c';
+  const optsFn = turno==='8-14' ? optsM : optsT;
+  const title = turno==='8-14' ? 'Salas extra mañana' : 'Salas extra tarde';
+
+  const rows_html = list.map((row,i)=>{
+    const opts = optsFn(row.asignado).map(n=>`<option value="${n}"${n===row.asignado?' selected':''}>${n}</option>`).join('');
+    return `<div style="display:grid;grid-template-columns:2fr 2fr 2.5fr 52px;gap:10px;padding:10px 15px;align-items:center;background:${i%2===0?bg:bgAlt};border-top:${i>0?`1px solid ${bc}`:'none'};opacity:${row.bloqueado?.65:1}">
+      <div class="secinfo">
+        <span style="font-size:15px">${row.emoji}</span>
+        <input value="${row.label}" data-id="${row.id}" data-field="label" oninput="updateExtra(this)"
+          style="background:${bg};color:var(--text);border:1px solid ${bc};border-radius:6px;padding:4px 7px;font-size:13px;font-weight:600;outline:none;width:100%;font-family:'Syne',sans-serif">
+      </div>
+      <select data-id="${row.id}" data-field="asignado" onchange="updateExtra(this)" ${row.bloqueado?'disabled':''}
+        style="background:${bg};color:var(--text);border:1px solid ${bc};border-radius:6px;padding:5px 7px;font-size:12px;width:100%;font-family:'Syne',sans-serif">
+        <option value="">– sin asignar –</option>${opts}
+      </select>
+      <input class="finp" placeholder="Nota…" value="${row.nota||''}" data-id="${row.id}" data-field="nota" oninput="updateExtra(this)"
+        style="background:${bg};border:1px solid ${bc}">
+      <div style="display:flex;gap:3px">
+        <button class="lkbtn" onclick="toggleLockExtra('${row.id}')" style="color:${row.bloqueado?'var(--accent)':'var(--muted)'}">${row.bloqueado?'🔒':'🔓'}</button>
+        <button class="lkbtn" onclick="removeExtra('${row.id}')" style="color:var(--red);font-size:15px">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById(containerId).innerHTML = `
+    <div style="margin-bottom:22px">
+      <div class="sectitle" style="color:${color}">${title}</div>
+      <div style="border-radius:11px;border:1px solid ${bc};overflow:hidden">
+        <div style="display:grid;grid-template-columns:2fr 2fr 2.5fr 52px;padding:9px 15px;background:${bg};color:${color};font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;gap:10px">
+          <span>Sala</span><span>Anestesista</span><span>Nota</span><span></span>
+        </div>
+        ${rows_html}
+      </div>
+    </div>`;
+}
+
+function renderCarga() {
+  const countMap = {};
+  [...rows,...extraSalas].forEach(r=>{if(r.asignado)countMap[r.asignado]=(countMap[r.asignado]||0)+1;});
+  nocturnos.forEach(n=>{if(n.nombre)countMap[n.nombre]=(countMap[n.nombre]||0)+1;});
+  document.getElementById('carga-wrap').innerHTML = todosEquipo().map(n=>{
+    const c = countMap[n]||0;
+    const bg = c>1?'#1a0e00':c===1?'#061a0c':'var(--surf)';
+    const bc = c>1?'var(--amber)':c===1?'var(--green)':'var(--border)';
+    const cntBg = c>1?'var(--amber)':c===1?'var(--green)':'#252b35';
+    const cntClr = c>0?'#000':'var(--muted)';
+    return `<div class="cargabdg" style="background:${bg};border:1px solid ${bc}">
+      <span style="color:${c>0?'var(--text)':'var(--muted2)'}">${n}</span>
+      <span class="cargacnt" style="background:${cntBg};color:${cntClr}">${c}</span>
+    </div>`;
+  }).join('');
+}
+
+function renderHistorial() {
+  const wrap = document.getElementById('historial-wrap');
+  const list = document.getElementById('historial-list');
+  if (!historial.length) { wrap.style.display='none'; return; }
+  wrap.style.display='block';
+  document.getElementById('btn-deshacer').style.display = historial.length ? 'inline-block' : 'none';
+  list.innerHTML = historial.map((snap,i)=>`
+    <div class="histitem">
+      <span style="color:var(--muted2)">Estado #${historial.length-i}</span>
+      <button class="abtn" style="color:var(--accent);border-color:var(--accent);font-size:11px;padding:4px 9px" onclick="restaurar(${i})">Restaurar</button>
+    </div>`).join('');
+}
+
+function renderNocturna() {
+  const eq = todosEquipo();
+  document.getElementById('noc-rows').innerHTML = nocturnos.map((n,i)=>{
+    const opts = eq.map(p=>`<option value="${p}"${p===n.nombre?' selected':''}>${p}</option>`).join('');
+    return `<div class="nocrow" style="background:${i%2===0?'#0d0b1f':'#09071a'}">
+      <input value="${n.sector}" data-id="${n.id}" data-field="sector" oninput="updateNoc(this)"
+        style="background:#1e1b4b;color:var(--text);border:1px solid var(--nightB);border-radius:6px;padding:6px 9px;font-size:13px;font-weight:600;outline:none;width:100%;font-family:'Syne',sans-serif">
+      <select data-id="${n.id}" data-field="nombre" onchange="updateNoc(this)"
+        style="background:#1e1b4b;color:var(--text);border:1px solid var(--nightB);border-radius:6px;padding:5px 7px;font-size:12px;width:100%;font-family:'Syne',sans-serif">
+        <option value="">-- sin asignar --</option>${opts}
+      </select>
+      <button class="lkbtn" onclick="removeNoc('${n.id}')" style="color:var(--red);font-size:17px">✕</button>
+    </div>`;
+  }).join('');
+}
+
+// ─── ACCIONES ─────────────────────────────────────────────────────────────────
+function updateRow(el) {
+  const {id, field} = el.dataset;
+  rows = rows.map(r=>r.id===id?{...r,[field]:el.value}:r);
+  persist(); renderCarga();
+}
+
+function toggleLock(id) {
+  rows = rows.map(r=>r.id===id?{...r,bloqueado:!r.bloqueado}:r);
+  persist(); renderAll();
+}
+
+function updateExtra(el) {
+  const {id, field} = el.dataset;
+  extraSalas = extraSalas.map(s=>s.id===id?{...s,[field]:el.value}:s);
+  persist(); renderCarga();
+}
+
+function toggleLockExtra(id) {
+  extraSalas = extraSalas.map(s=>s.id===id?{...s,bloqueado:!s.bloqueado}:s);
+  persist(); renderAll();
+}
+
+function removeExtra(id) {
+  extraSalas = extraSalas.filter(s=>s.id!==id);
+  persist(); renderAll();
+}
+
+function addExtra(label, emoji, turno) {
+  extraSalas.push({id:'ex'+Date.now(),label,emoji,turno,asignado:'',nota:'',bloqueado:false});
+  persist(); renderAll();
+}
+
+function addCustom(turno) {
+  const val = document.getElementById('custom-sala').value.trim();
+  if (!val) return;
+  addExtra(val, '🏥', turno);
+  document.getElementById('custom-sala').value='';
+}
+
+function updateNoc(el) {
+  const {id, field} = el.dataset;
+  nocturnos = nocturnos.map(n=>n.id===id?{...n,[field]:el.value}:n);
+  persist();
+}
+
+function removeNoc(id) {
+  nocturnos = nocturnos.filter(n=>n.id!==id);
+  persist(); renderNocturna();
+}
+
+function addNoc() {
+  nocturnos.push({id:'noc'+Date.now(),nombre:'',sector:'Guardia nocturna'});
+  persist(); renderNocturna();
+}
+
+function regenerar() {
+  historial.unshift({rows:[...rows],nocturnos:[...nocturnos],extraSalas:[...extraSalas]});
+  historial = historial.slice(0,6);
+  const locked = rows.filter(r=>r.bloqueado);
+  rows = buildAssignment(jData, locked);
+  const mPool2 = shuffle(jData.manana.slice()), tPool2 = shuffle(jData.tarde.slice());
+  const used = Object.fromEntries(rows.filter(r=>r.asignado).map(r=>[r.asignado,1]));
+  let mi=0,ti=0;
+  extraSalas = extraSalas.map(s=>{
+    if(s.bloqueado)return s;
+    const pool2=s.turno==='8-14'?mPool2:tPool2;
+    const start=s.turno==='8-14'?mi:ti;
+    let pick='';
+    for(let i=0;i<pool2.length;i++){const c=pool2[(start+i)%pool2.length];if(!used[c]){pick=c;used[c]=1;if(s.turno==='8-14')mi=start+i+1;else ti=start+i+1;break;}}
+    if(!pick)pick=pool2[start%pool2.length]||'';
+    return {...s,asignado:pick};
+  });
+  persist(); renderAll(); showFlash('Asignación generada ✓');
+}
+
+function guardarHistorial() {
+  historial.unshift({rows:[...rows],nocturnos:[...nocturnos],extraSalas:[...extraSalas]});
+  historial = historial.slice(0,6);
+  renderHistorial(); showFlash('Guardado en historial');
+}
+
+function deshacer() {
+  if (!historial.length) return;
+  const snap = historial.shift();
+  rows=[...snap.rows]; nocturnos=[...snap.nocturnos]; extraSalas=[...(snap.extraSalas||[])];
+  persist(); renderAll(); showFlash('Deshecho');
+}
+
+function restaurar(i) {
+  const snap = historial[i];
+  rows=[...snap.rows]; nocturnos=[...snap.nocturnos]; extraSalas=[...(snap.extraSalas||[])];
+  historial.splice(i,1);
+  persist(); renderAll(); showFlash('Restaurado');
+}
+
+function handleImport() {
+  const text = document.getElementById('paste-area').value;
+  if (!text.trim()) { showFlash('Pegá el contenido primero','err'); return; }
+  const lines = text.split('\n').map(l=>l.split('\t').map(c=>c.trim()));
+  const jueves = lines.filter(r=>r[0]?.toUpperCase().startsWith('JUEVES')&&r[1]?.trim());
+  if (!jueves.length) { showFlash('No se encontraron filas del JUEVES','err'); return; }
+  const res={coordinador1:null,coordinador2:null,manana:[],endoscopia:'',tarde:[],nocturnos:[]};
+  let cc=0;
+  jueves.forEach(r=>{
+    const nom=(r[1]||'').trim().toUpperCase();
+    const fun=(r[2]||'').trim().toUpperCase();
+    const hor=(r[3]||'').trim().toUpperCase();
+    if(!nom)return;
+    if(fun.includes('COORDINADOR')&&hor==='8 A 20'){cc++;if(cc===1)res.coordinador1={nombre:nom,turno:'8-20'};else res.coordinador2={nombre:nom,turno:'8-20'};}
+    else if(hor==='8 A 17'){res.endoscopia=nom;}
+    else if(hor==='8 A 14'){res.manana.push(nom);}
+    else if(hor==='14 A 20'){res.tarde.push(nom);}
+    else if(hor==='20 A 8'){res.nocturnos.push({id:'noc'+res.nocturnos.length,nombre:nom,sector:'Guardia nocturna'});}
+  });
+  if(!res.manana.length&&!res.tarde.length){showFlash('No se encontraron datos válidos','err');return;}
+  jData=res; rows=buildAssignment(res);
+  if(res.nocturnos.length)nocturnos=res.nocturnos;
+  persist(); document.getElementById('paste-area').value='';
+  setTab('planilla', document.querySelector('.tbtn'));
+  showFlash(`Importado: ${res.manana.length} mañana, ${res.tarde.length} tarde`);
+}
+
+// ─── WHATSAPP ─────────────────────────────────────────────────────────────────
+function buildTexto() {
+  const c1=jData.coordinador1,c2=jData.coordinador2;
+  const pad=(s,n)=>String(s||'').padEnd(n);
+  const linea=(label,turno,nom,nota)=>`${pad(label,22)} ${pad(turno,6)} ${nom||'–'}${nota?` (${nota})`:''}`;
+  const manana=rows.filter(r=>SECTORES.find(x=>x.id===r.id)?.turno.startsWith('8'));
+  const tarde =rows.filter(r=>SECTORES.find(x=>x.id===r.id)?.turno.startsWith('14'));
+  return [
+    'GUARDIA ANESTESIA - JUEVES',`Fecha: ${fecha}`,'',
+    `Coord G3(1): ${c1?.nombre||'–'} (${c1?.turno||''})`,
+    `Coord G3(2): ${c2?.nombre||'–'} (${c2?.turno||''})`, '',
+    'TURNO MANANA (8-14 / 8-17)','––––––––––––––––––––',
+    ...manana.map(r=>{const s=SECTORES.find(x=>x.id===r.id);return linea(s?.label,s?.turno,r.asignado,r.nota);}),
+    ...extraSalas.filter(s=>s.turno==='8-14').map(r=>linea(r.label,r.turno,r.asignado,r.nota)),
+    '','TURNO TARDE (14-20)','––––––––––––––––––––',
+    ...tarde.map(r=>{const s=SECTORES.find(x=>x.id===r.id);return linea(s?.label,s?.turno,r.asignado,r.nota);}),
+    ...extraSalas.filter(s=>s.turno==='14-20').map(r=>linea(r.label,r.turno,r.asignado,r.nota)),
+    '','GUARDIA NOCTURNA (20-8)','––––––––––––––––––––',
+    ...nocturnos.map(n=>`${pad(n.sector,22)} 20-8   ${n.nombre||'–'}`),
+  ].join('\n');
+}
+
+document.getElementById('modal-wa').addEventListener('click', e=>{
+  if(e.target===document.getElementById('modal-wa'))
+    document.getElementById('modal-wa').classList.remove('show');
+});
+
+// Actualizar texto cada vez que se abre el modal
+const origShow = document.getElementById('modal-wa').classList.add.bind(document.getElementById('modal-wa').classList);
+document.querySelector('[onclick*="modal-wa"]')?.addEventListener('click',()=>{
+  document.getElementById('texto-wa').textContent = buildTexto();
+});
+
+function copiarTexto() {
+  const texto = buildTexto();
+  const btn = document.getElementById('btn-copiar');
+  const ok = ()=>{ btn.textContent='✓ Copiado — Pegá en WhatsApp'; btn.style.background='#16a34a'; setTimeout(()=>{ btn.textContent='📋 Copiar planilla'; btn.style.background='#15803d'; },2500); };
+  navigator.clipboard?.writeText(texto).then(ok).catch(()=>{
+    const ta=Object.assign(document.createElement('textarea'),{value:texto,style:'position:fixed;opacity:0'});
+    document.body.appendChild(ta);ta.focus();ta.select();
+    try{document.execCommand('copy');ok();}catch(e){}
+    document.body.removeChild(ta);
+  });
+}
+
+// Parchar el botón compartir para actualizar el texto
+document.querySelector('button[onclick*="modal-wa"]').addEventListener('click',()=>{
+  document.getElementById('texto-wa').textContent = buildTexto();
+});
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+(async function init() {
+  show('screen-loading');
+  const data = await dbRead();
+  if (data) applyData(data);
+  showReadonly();
+})();
+</script>
+
+</body>
+</html>
